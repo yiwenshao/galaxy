@@ -25,6 +25,7 @@ import (
 	"strconv"
 	"strings"
 
+	bv "github.com/containernetworking/plugins/pkg/utils/buildversion"
 	"github.com/containernetworking/cni/pkg/skel"
 	"github.com/containernetworking/cni/pkg/types"
 	t020 "github.com/containernetworking/cni/pkg/types/020"
@@ -114,8 +115,12 @@ func cmdDel(args *skel.CmdArgs) error {
 	return galaxyIpam.Release(conf.IPAM.Type, args)
 }
 
+func cmdCheck(args *skel.CmdArgs) error {
+	return nil
+}
+
 func main() {
-	skel.PluginMain(cmdAdd, cmdDel, version.Legacy)
+	skel.PluginMain(cmdAdd, cmdCheck, cmdDel, version.Legacy, bv.BuildString("k8s-sriov"))
 }
 
 // code from https://raw.githubusercontent.com/Intel-Corp/sriov-cni/master/sriov/sriov.go
