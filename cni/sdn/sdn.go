@@ -26,10 +26,10 @@ import (
 	"os"
 	"strings"
 
-	bv "github.com/containernetworking/plugins/pkg/utils/buildversion"
 	"github.com/containernetworking/cni/pkg/skel"
 	current "github.com/containernetworking/cni/pkg/types/current"
 	"github.com/containernetworking/cni/pkg/version"
+	bv "github.com/containernetworking/plugins/pkg/utils/buildversion"
 	galaxyapi "tkestack.io/galaxy/pkg/api/galaxy"
 	"tkestack.io/galaxy/pkg/api/galaxy/private"
 )

@@ -24,7 +24,6 @@ import (
 	"net"
 	"runtime"
 
-	bv "github.com/containernetworking/plugins/pkg/utils/buildversion"
 	"github.com/containernetworking/cni/pkg/skel"
 	"github.com/containernetworking/cni/pkg/types"
 	t020 "github.com/containernetworking/cni/pkg/types/020"
@@ -32,6 +31,7 @@ import (
 	cniSpecVersion "github.com/containernetworking/cni/pkg/version"
 	"github.com/containernetworking/plugins/pkg/ip"
 	"github.com/containernetworking/plugins/pkg/ns"
+	bv "github.com/containernetworking/plugins/pkg/utils/buildversion"
 	"github.com/vishvananda/netlink"
 
 	galaxyIpam "tkestack.io/galaxy/cni/ipam"

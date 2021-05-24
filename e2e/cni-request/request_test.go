@@ -18,6 +18,7 @@ package cni_request_test
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -35,6 +36,8 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	glog "k8s.io/klog"
+	t020 "github.com/containernetworking/cni/pkg/types/020"
+	current "github.com/containernetworking/cni/pkg/types/current"
 )
 
 func NewFakeRequest(method string) (string, error) {
@@ -93,7 +96,7 @@ FLANNEL_IPMASQ=true`
 	Expect(err).NotTo(HaveOccurred())
 	jsonFile = jsonConfigFile.Name()
 	Expect(jsonConfigFile.Close()).NotTo(HaveOccurred())
-	err = ioutil.WriteFile(jsonFile, []byte(`{"NetworkConf":[{"type":"galaxy-flannel", "delegate":{"type":"galaxy-bridge","isDefaultGateway":true,"forceAddress":true},"subnetFile":"/run/flannel/subnet.env"}], "DefaultNetworks": ["galaxy-flannel"]}`), 0644)
+	err = ioutil.WriteFile(jsonFile, []byte(`{"NetworkConf":[{"type":"galaxy-flannel", "delegate":{"type":"galaxy-bridge","isDefaultGateway":true,"forceAddress":true},"subnetFile":"/run/flannel/subnet.env","cniVersion": "0.3.1"}], "DefaultNetworks": ["galaxy-flannel"]}`), 0644)
 	Expect(err).NotTo(HaveOccurred())
 
 	g := galaxy.NewGalaxy()
@@ -154,5 +157,12 @@ func call(method string) string {
 	Expect(err).NotTo(HaveOccurred())
 	content, err := ioutil.ReadAll(resp.Body)
 	Expect(err).NotTo(HaveOccurred())
-	return string(content)
+	resultCurrent := &current.Result{}
+	err = json.Unmarshal(content, resultCurrent)
+	Expect(err).NotTo(HaveOccurred())
+	result020 , err := resultCurrent.GetAsVersion(t020.ImplementedSpecVersion)
+	Expect(err).NotTo(HaveOccurred())
+	bytes, err := json.Marshal(result020)
+	Expect(err).NotTo(HaveOccurred())
+	return string(bytes)
 }
