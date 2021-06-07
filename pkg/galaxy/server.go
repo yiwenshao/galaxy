@@ -431,25 +431,24 @@ func (g *Galaxy) getPod(name, namespace string) (*corev1.Pod, error) {
 	return pod, nil
 }
 
-func convertResult(result types.Result) (*t020.Result, error) {
+// if Result is in current version, convert it to t020 version, and then to t020.Result
+// if it is already in t020 version, convert it to t020.Result directly
+func convertResult(result types.Result) (result020 *t020.Result, err error) {
 	if result == nil {
 		return nil, fmt.Errorf("result is nil")
 	}
-	resultCurrent, ok := result.(*current.Result)
-	if !ok {
-		return nil, fmt.Errorf("faild to convert result to 020 result")
+	switch result.Version() {
+	case current.ImplementedSpecVersion:
+		result, err = result.GetAsVersion(t020.ImplementedSpecVersion)
+		if err != nil {
+			return nil, err
+		}
+		fallthrough
+	case t020.ImplementedSpecVersion:
+		result020, _ = result.(*t020.Result)
+	default:
+		return nil, fmt.Errorf("unsupported result version %v", result.Version())
 	}
-
-	result, err := resultCurrent.GetAsVersion(t020.ImplementedSpecVersion)
-	if err != nil {
-		return nil, err
-	}
-
-	result020, ok := result.(*t020.Result)
-	if !ok {
-		return nil, fmt.Errorf("faild to convert result to 020 result")
-	}
-
 	if result020.IP4 == nil {
 		return nil, fmt.Errorf("CNI plugin reported no IPv4 address")
 	}

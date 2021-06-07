@@ -82,9 +82,9 @@ spec:
       - image: tkestack/galaxy:v1.0.7
         command: ["/bin/sh"]
       # qcloud galaxy should run with --route-eni
-        args: ["-c", "cp -p /etc/galaxy/cni/00-galaxy.conf /etc/cni/net.d/; cp -p /opt/cni/galaxy/bin/galaxy-sdn /opt/cni/galaxy/bin/loopback /opt/cni/bin/; /usr/bin/galaxy --logtostderr=true --v=3 --route-eni"]
+        args: ["-c", "cp -p /etc/galaxy/cni/00-galaxy.conflist /etc/cni/net.d/; cp -p /opt/cni/galaxy/bin/galaxy-sdn /opt/cni/galaxy/bin/loopback /opt/cni/bin/; /usr/bin/galaxy --logtostderr=true --v=3 --route-eni"]
       # private-cloud should run without --route-eni
-      # args: ["-c", "cp -p /etc/galaxy/cni/00-galaxy.conf /etc/cni/net.d/; cp -p /opt/cni/galaxy/bin/galaxy-sdn /opt/cni/galaxy/bin/loopback /opt/cni/bin/; /usr/bin/galaxy --logtostderr=true --v=3"]
+      # args: ["-c", "cp -p /etc/galaxy/cni/00-galaxy.conflist /etc/cni/net.d/; cp -p /opt/cni/galaxy/bin/galaxy-sdn /opt/cni/galaxy/bin/loopback /opt/cni/bin/; /usr/bin/galaxy --logtostderr=true --v=3"]
         imagePullPolicy: Always
         env:
           - name: MY_NODE_NAME
@@ -181,18 +181,20 @@ metadata:
   name: cni-etc
   namespace: kube-system
 data:
-  00-galaxy.conf: |
+  00-galaxy.conflist: |
     {
+      "name": "galaxy",
       "cniVersion": "0.3.1",
       "plugins": [
         {
-          "name": "galaxy-sdn",,
+          "name": "galaxy-sdn",
           "type": "galaxy-sdn",
           "capabilities": {
             "portMappings": true
           }
         },
         {
+          "name": "bandwidth",
           "type": "bandwidth",
           "capabilities": {
             "bandwidth": true

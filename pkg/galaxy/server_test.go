@@ -17,6 +17,10 @@
 package galaxy
 
 import (
+	t020 "github.com/containernetworking/cni/pkg/types/020"
+	"github.com/containernetworking/cni/pkg/types/current"
+	"gotest.tools/assert"
+	"net"
 	"testing"
 
 	corev1 "k8s.io/api/core/v1"
@@ -36,4 +40,30 @@ func TestParseExtendedCNIArgs(t *testing.T) {
 	} else if string(val) != `[{"ip":"10.0.0.3/24","vlan":0,"gateway":"10.0.0.1"},{"ip":"10.0.0.200/24","vlan":0,"gateway":"10.0.0.1"}]` {
 		t.Fatal()
 	}
+}
+
+func TestConvertResult(t *testing.T) {
+	t1 := &t020.Result{
+		IP4: &t020.IPConfig{
+			IP: net.IPNet{
+				IP: net.IPv4(127, 0, 0, 1),
+			},
+		},
+	}
+	res, _ := convertResult(t1)
+	assert.Equal(t, res.IP4.IP.IP.String(), "127.0.0.1")
+
+	t2 := &current.Result{
+		IPs: []*current.IPConfig{
+			{
+				Version: "4",
+				Address: net.IPNet{
+					IP: net.IPv4(127, 0, 0, 1),
+				},
+			},
+		},
+	}
+	res, _ = convertResult(t2)
+	assert.Equal(t, res.IP4.IP.IP.String(), "127.0.0.1")
+
 }

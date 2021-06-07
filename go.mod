@@ -24,6 +24,7 @@ require (
 	golang.org/x/net v0.0.0-20191011234655-491137f69257
 	golang.org/x/sys v0.0.0-20191010194322-b09406accb47
 	google.golang.org/grpc v1.24.0
+	gotest.tools v2.2.0+incompatible
 	k8s.io/api v0.16.15
 	k8s.io/apiextensions-apiserver v0.16.15
 	k8s.io/apimachinery v0.16.15
